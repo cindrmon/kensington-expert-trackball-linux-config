@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# xinput list 
+# Kensington Expert Wireless Mouse xinput list 
 # Default layout
 # "Button Middle"  	"Button Wheel Up"      "Button Horiz Wheel Left"    "Button Side"
 #       2                   4                         6						  8         "Button Extra"
@@ -12,6 +12,13 @@
 # "Button Left" "Button Middle" "Button Right" "Button Wheel Up" "Button Wheel Down" "Button Horiz Wheel Left" "Button Horiz Wheel Right" "Button Side" "Button Extra"
 #       1              2             3              4                   5                  6                               7                   8             9
 #
+
+# Kensington Orbit (No Scroll Wheel) xinput list
+
+# "Button Left" "Button Middle" "Button Right" "Button Wheel Up" "Button Wheel Down" "Button Horiz Wheel Left" "Button Horiz Wheel Right"
+#       1              2             3              4                   5                  6                               7
+#
+# NOTE: Button Middle is emulated with the Kensington Orbit
 
 mouse_name="Kensington Expert Wireless TB Mouse"
 
@@ -29,6 +36,23 @@ if [[ ! -z "$check" ]]; then
 	# allow scrolling by holding middle mouse button and using the ball to scroll ( really smooth and fast ). 
 	# Note this uses the original middle click button, so like I have mapped my middle click to bottom right but I still need to use the top left button
 	xinput set-prop $mouse_id "libinput Scroll Method Enabled" 0, 0, 1
+fi
+
+mouse_name="Kensington USB Orbit"
+
+check=$(xinput | grep "$mouse_name")
+
+if [[ ! -z "$check" ]]; then
+	mouse_id=$(xinput | grep "$mouse_name" | sed 's/^.*id=\([0-9]*\)[ \t].*$/\1/')
+	# enable better scrolling 
+	xinput set-prop $mouse_id "libinput Natural Scrolling Enabled" 1
+	# disable acceliration for the ball
+	xinput set-prop $mouse_id "libinput Accel Profile Enabled" 0, 1
+	# allow scrolling by holding middle mouse button and using the ball to scroll ( really smooth and fast ). 
+	# Note this uses the original middle click button, so like I have mapped my middle click to bottom right but I still need to use the top left button
+	xinput set-prop $mouse_id "libinput Scroll Method Enabled" 0, 0, 1
+	# Emulate Middle-Click by pressing left and right click at the same time
+	xinput set-prop $mouse_id "libinput Middle Emulation Enabled" 1
 fi
 
 # read more here https://askubuntu.com/questions/492744/how-do-i-automatically-remap-buttons-on-my-mouse-at-startup
